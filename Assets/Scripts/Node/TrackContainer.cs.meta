@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 43873e1f7169be14fa48c81cc6df2272
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_DotPrefabs: {fileID: 2872288713886183653, guid: 27c263f91c38b0e4c9cb611947ed079e,
+      type: 3}
+  - m_Car: {instanceID: 0}
+  - m_HeightSlider: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
