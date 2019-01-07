@@ -8,8 +8,7 @@ public class TrackContainer : MonoBehaviour
 
     #region PredictLine
 
-    
-    private bool isPredictHolding = false;
+    public float m_height;
     public string m_SelectName;
     public GameObject m_DotPrefabs;
     public GameObject m_Car;
@@ -18,11 +17,7 @@ public class TrackContainer : MonoBehaviour
     public Dropdown m_SelectDropDown;
     public bool m_GolbalBased=true;
 
-
-    public void OnPredictHoldChanged(bool value)
-    {
-        isPredictHolding = value;
-    }
+    
 
     public void OnHighChanged()
     {
@@ -31,21 +26,22 @@ public class TrackContainer : MonoBehaviour
         {
             Vector3 pos = transform.position;
             pos.y = m_HeightSlider.value;
+            m_height = m_HeightSlider.value;
             transform.position = pos;
         }    
     }
 
     public void DrawPredictLine(List<Vector2> line)
     {
-        if (!isPredictHolding)
-            ClearPredictLine();
+        
+        ClearPredictLine();
         foreach (Vector2 vec in line)
         {
             GameObject _pl = Instantiate(m_DotPrefabs, transform);
             if (!m_GolbalBased)
-                _pl.transform.position = TransCarCordToWorldCord(vec);
+                _pl.transform.position = TransCarCordToWorldCord(vec, m_height);
             else
-                _pl.transform.position = vec;
+                _pl.transform.position = new Vector3(vec.x, m_height, vec.y);
             Renderer renderer = _pl.GetComponent<Renderer>();
             renderer.material.color = m_LineColor;
 
@@ -62,9 +58,9 @@ public class TrackContainer : MonoBehaviour
 
     }
 
-    private Vector3 TransCarCordToWorldCord(Vector2 vec)
+    private Vector3 TransCarCordToWorldCord(Vector2 vec,float height)
     {
-        Vector3 temp = new Vector3(vec.x, 0, vec.y);
+        Vector3 temp = new Vector3(vec.x, height, vec.y);
         temp = m_Car.transform.rotation * temp;
         temp = temp + m_Car.transform.position;
 

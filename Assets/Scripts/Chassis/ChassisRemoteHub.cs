@@ -153,7 +153,7 @@ namespace Chassis {
         /// </summary>
         private class CoreTargetListProcessor : IMulticastListener
         {
-            private static readonly byte[] InterestList = { (byte)Command.AList };
+            private static readonly byte[] InterestList = { (byte)Command.ATargetList };
 
             private readonly Action<List<Vector2>> _drive;
 

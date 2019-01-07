@@ -9,17 +9,26 @@ public class PostureContainer : MonoBehaviour
     public string m_SelectName;
     public Dropdown m_SelectDropDown;
     public GameObject m_ArrowPrefabs;
-    public Color m_RecordColor;
-    public Color m_PlayColor;
+    public Color m_Color;
     public Slider m_HeightSlider;
 
     private bool m_IsRecording = true;
 
-    public void OnRecordChanged(bool value)
+
+    public void OnClearButtonResponed()
     {
-        m_IsRecording = value;
+        ClearPose();
     }
 
+    private void ClearPose()
+    {
+        int count = transform.childCount;
+        for (int i = count - 1; i >= 0; i--)
+        {
+            Destroy(transform.GetChild(i).gameObject);
+        }
+
+    }
     public void OnHighChanged()
     {
         Text text = m_SelectDropDown.captionText;
@@ -43,10 +52,10 @@ public class PostureContainer : MonoBehaviour
         gm.transform.rotation = rot;
 
         MeshRenderer render = gm.GetComponentInChildren<MeshRenderer>();
-        if (m_IsRecording)
-            render.material.color = m_RecordColor;
-        else
-            render.material.color = m_PlayColor;
+        
+        render.material.color = m_Color;
+        
+
 
         
     }
