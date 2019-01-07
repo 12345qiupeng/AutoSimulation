@@ -41,8 +41,8 @@ namespace Chassis {
 		/// </summary>
 		private readonly ChassisRemoteHub _remoteHub;
 
-        private List<Vector2> pline;
-        private bool islinechanged=false;
+        private List<Vector2> pline, targetLine;
+        private bool islinechanged=false,isTargetLineChanged=false;
 
 		/// <summary>
 		///     远程终端只能在解析器中构造
@@ -57,10 +57,16 @@ namespace Chassis {
 				    (a, b, c, d, e, f, det) => _trans.Field = Tuple.Create(a, b, c, d, e, f, det),
 				    //  -
 				    Console.WriteLine,
+                    //
                     (list)=> {
                         pline = list;
                         islinechanged = true;
-                    });
+                    },
+                    (list) => {
+                        targetLine = list;
+                        isTargetLineChanged = true;
+                    }
+                    );
 
 		public void AddKeyPose() {
 			_remoteHub.Send($"save key pose {Guid.NewGuid().ToString()}");
@@ -77,7 +83,8 @@ namespace Chassis {
         #region PredictLine
 
         public GameObject m_TrackContainer;
-        
+        public GameObject m_TargetContainer;
+
         public void OnPredictLineBtnClicked()
         {    
             List<Vector2> tline = new List<Vector2>();
@@ -128,6 +135,11 @@ namespace Chassis {
             {
                 islinechanged = false;
                 m_TrackContainer.GetComponent<TrackContainer>().DrawPredictLine(pline);
+            }
+            if(isTargetLineChanged)
+            {
+                isTargetLineChanged = false;
+                m_TargetContainer.GetComponent<TrackContainer>().DrawPredictLine(targetLine);
             }
             if (_trans.Field == null) return;
 			var (a, b, c, d, e, f, det) = _trans.Field;

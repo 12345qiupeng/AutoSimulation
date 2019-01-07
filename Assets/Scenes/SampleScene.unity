@@ -838,7 +838,7 @@ MonoBehaviour:
     m_Options:
     - m_Text: PredictTrack
       m_Image: {fileID: 0}
-    - m_Text: RecordTrack
+    - m_Text: TargetTrack
       m_Image: {fileID: 0}
     - m_Text: RealtimePosture
       m_Image: {fileID: 0}
@@ -2569,6 +2569,7 @@ MonoBehaviour:
   data: {fileID: 710112662}
   displayMode: {fileID: 2111098041}
   m_TrackContainer: {fileID: 2081621773}
+  m_TargetContainer: {fileID: 1470071261}
   nodeCreatePeriod: 0.05
   m_PostureContainer: {fileID: 1804103431}
 --- !u!1 &935774179
@@ -3523,7 +3524,7 @@ GameObject:
   - component: {fileID: 1470071263}
   - component: {fileID: 1470071262}
   m_Layer: 0
-  m_Name: RecordTrack
+  m_Name: TargetTrack
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3542,7 +3543,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 43873e1f7169be14fa48c81cc6df2272, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SelectName: RecordTrack
+  m_SelectName: TargetTrack
   m_DotPrefabs: {fileID: 2872288713886183653, guid: 27c263f91c38b0e4c9cb611947ed079e,
     type: 3}
   m_Car: {fileID: 871389904}

@@ -36,7 +36,8 @@ namespace Chassis {
 			Action<float, float, float>                             externalPoseReceived,
 			Action<float, float, float, float, float, float, float> externalTransReceived,
 			Action<string>                                          commandReceived,
-            Action<List<Vector2>>                                   externalListReceived
+            Action<List<Vector2>>                                   externalListReceived,
+            Action<List<Vector2>>                                   externalTargetReceived
 
         ) : base("Unity Chassis",
 		         newMemberDetected: it => Debug.Log($"{Chassis} detected {it}"),
@@ -45,8 +46,10 @@ namespace Chassis {
 			                                     new CorePoseProcessor(externalPoseReceived),
 			                                     new CoreTransProcessor(externalTransReceived),
 			                                     new CoreCmdProcessor(commandReceived),
-			                                     new CoreListProcessor(externalListReceived)
-		                                     }
+			                                     new CoreListProcessor(externalListReceived),
+                                                 new CoreTargetListProcessor(externalTargetReceived)
+
+                                             }
 		        ) => _token = _cancellation.Token;
 
 		/// <summary>
@@ -146,6 +149,31 @@ namespace Chassis {
         }
 
         /// <summary>
+        ///     响应目标轨迹
+        /// </summary>
+        private class CoreTargetListProcessor : IMulticastListener
+        {
+            private static readonly byte[] InterestList = { (byte)Command.AList };
+
+            private readonly Action<List<Vector2>> _drive;
+
+            public CoreTargetListProcessor(Action<List<Vector2>> drive) => _drive = drive;
+
+            public void Process(RemotePacket remotePacket)
+            {
+                var (sender, _, payload) = remotePacket;
+                if (sender != algorithm) return;
+                var stream = new MemoryStream(payload);
+                var list = new List<Vector2>();
+                while (stream.Available() > 0)
+                    list.Add(new Vector2(stream.ReadFloat(), stream.ReadFloat()));
+                _drive(list);
+            }
+
+            public IReadOnlyCollection<byte> Interest => InterestList;
+        }
+
+        /// <summary>
         ///     响应矩阵显示位姿
         /// </summary>
         private class CoreTransProcessor : IMulticastListener {
@@ -193,7 +221,8 @@ namespace Chassis {
 			AVelocity = 65, // 算法目标速度
 			APose     = 66, // 算法位姿
 			ATrans    = 67,  // 算法变换矩阵
-			AList     = 68  // 算法变换矩阵
+			AList     = 68,  // 算法变换矩阵
+            ATargetList = 69
 		}
 	}
 }
