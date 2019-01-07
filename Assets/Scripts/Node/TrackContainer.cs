@@ -16,6 +16,7 @@ public class TrackContainer : MonoBehaviour
     public Slider m_HeightSlider;
     public Color m_LineColor;
     public Dropdown m_SelectDropDown;
+    public bool m_GolbalBased=true;
 
 
     public void OnPredictHoldChanged(bool value)
@@ -41,7 +42,10 @@ public class TrackContainer : MonoBehaviour
         foreach (Vector2 vec in line)
         {
             GameObject _pl = Instantiate(m_DotPrefabs, transform);
-            _pl.transform.position = TransCarCordToWorldCord(vec);
+            if (!m_GolbalBased)
+                _pl.transform.position = TransCarCordToWorldCord(vec);
+            else
+                _pl.transform.position = vec;
             Renderer renderer = _pl.GetComponent<Renderer>();
             renderer.material.color = m_LineColor;
 

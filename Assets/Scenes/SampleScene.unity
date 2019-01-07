@@ -3550,6 +3550,7 @@ MonoBehaviour:
   m_HeightSlider: {fileID: 2053020782}
   m_LineColor: {r: 0.5566038, g: 0.17590779, b: 0.17590779, a: 0}
   m_SelectDropDown: {fileID: 378692708}
+  m_GolbalBased: 1
 --- !u!4 &1470071263
 Transform:
   m_ObjectHideFlags: 0
@@ -5019,6 +5020,7 @@ MonoBehaviour:
   m_HeightSlider: {fileID: 2053020782}
   m_LineColor: {r: 0.9056604, g: 0.90405476, b: 0.18369527, a: 0}
   m_SelectDropDown: {fileID: 378692708}
+  m_GolbalBased: 0
 --- !u!4 &2081621775
 Transform:
   m_ObjectHideFlags: 0
