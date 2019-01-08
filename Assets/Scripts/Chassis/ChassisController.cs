@@ -1,23 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using MechDancer.Common;
 using MechDancer.Framework.Dependency.UniqueComponent;
+using Node;
 using UnityEngine;
 using UnityEngine.UI;
 
-
 namespace Chassis {
 	public class ChassisController : MonoBehaviour {
-		public DataDisplay data;
-		public Toggle      displayMode;
+		public Toggle displayMode;
 
-        #region Chassis
+		#region Chassis
 
-        /// <summary>
-        ///     获取自身二维位姿
-        /// </summary>
-        private (float x, float y, float theta) CurrentPose =>
+		/// <summary>
+		///     获取自身二维位姿
+		/// </summary>
+		private (float x, float y, float theta) CurrentPose =>
 			(transform.position.x,
 			 transform.position.z,
 			 Mathf.Atan2(transform.right.z, transform.right.x));
@@ -41,8 +38,12 @@ namespace Chassis {
 		/// </summary>
 		private readonly ChassisRemoteHub _remoteHub;
 
-        private List<Vector2> pline, targetLine;
-        private bool islinechanged=false,isTargetLineChanged=false;
+		private List<Vector2>
+			pline,
+			targetLine;
+
+		private bool _isLineChanged,
+		             _isTargetLineChanged;
 
 		/// <summary>
 		///     远程终端只能在解析器中构造
@@ -57,16 +58,16 @@ namespace Chassis {
 				    (a, b, c, d, e, f, det) => _trans.Field = Tuple.Create(a, b, c, d, e, f, det),
 				    //  -
 				    Console.WriteLine,
-                    //
-                    (list)=> {
-                        pline = list;
-                        islinechanged = true;
-                    },
-                    (list) => {
-                        targetLine = list;
-                        isTargetLineChanged = true;
-                    }
-                    );
+				    //
+				    (list) => {
+					    pline          = list;
+					    _isLineChanged = true;
+				    },
+				    (list) => {
+					    targetLine           = list;
+					    _isTargetLineChanged = true;
+				    }
+				   );
 
 		public void AddKeyPose() {
 			_remoteHub.Send($"save key pose {Guid.NewGuid().ToString()}");
@@ -76,31 +77,29 @@ namespace Chassis {
 			         .SetPose(x, y, 0, θ + Mathf.PI / 2);
 		}
 
-        #endregion
+		#endregion
+
+		#region PredictLine
+
+		public GameObject trackContainer;
+		public GameObject targetContainer;
+
+		public void OnPredictLineBtnClicked() =>
+			trackContainer
+			   .GetComponent<TrackContainer>()
+			   .DrawPredictLine
+					(new List<Vector2> {
+						                   new Vector2(0, 1),
+						                   new Vector2(0, 2),
+						                   new Vector2(0, 3)
+					                   });
+
+		#endregion
 
 
+		#region Engine
 
-        #region PredictLine
-
-        public GameObject m_TrackContainer;
-        public GameObject m_TargetContainer;
-
-        public void OnPredictLineBtnClicked()
-        {    
-            List<Vector2> tline = new List<Vector2>();
-            tline.Add(new Vector2(0, 1));
-            tline.Add(new Vector2(0, 2));
-            tline.Add(new Vector2(0, 3));
-            m_TrackContainer.GetComponent<TrackContainer>().DrawPredictLine(tline);
-         }
-               
-
-        #endregion
-
-
-        #region Engine
-
-        private readonly Hook<Tuple<float, float>, object> _velocity
+		private readonly Hook<Tuple<float, float>, object> _velocity
 			= new Hook<Tuple<float, float>, object>();
 
 		private readonly Hook<Tuple<float, float, float>, object> _pose
@@ -109,21 +108,18 @@ namespace Chassis {
 		private readonly Hook<Tuple<float, float, float, float, float, float, float>, object> _trans
 			= new Hook<Tuple<float, float, float, float, float, float, float>, object>();
 
-		public  float   nodeCreatePeriod = 1.0f;
-		private Vector3 _lastPosition    = Vector3.zero;
-        public GameObject m_PostureContainer;
+		public  float      nodeCreatePeriod = 1.0f;
+		private Vector3    _lastPosition    = Vector3.zero;
+		public  GameObject postureContainer;
 
-    
-        private void CreateNode(float x, float y, float θ) {
-			if ((transform.position - _lastPosition).magnitude > nodeCreatePeriod)
-            //Functions.LoadObject(float.IsNaN(θ) ? "Node" : "Cone")
-            //         .Also(_ => _lastPosition = transform.position)
-            //         .transform
-            //         .SetPose(x, y, 0.5f, θ + Mathf.PI / 2);
-            {
-                m_PostureContainer.GetComponent<PostureContainer>().AddPose(transform.position, transform.rotation);
-                _lastPosition = transform.position;
-            }
+
+		private void CreateNode(float x, float y, float θ) {
+			var temp = transform;
+
+			if ((temp.position - _lastPosition).magnitude < nodeCreatePeriod) return;
+			postureContainer
+			   .GetComponent<PostureContainer>()
+			   .AddPose(_lastPosition = temp.position, temp.rotation);
 		}
 
 		private void Start() => _remoteHub.Start();
@@ -131,20 +127,14 @@ namespace Chassis {
 		private void OnDestroy() => _remoteHub.Stop();
 
 		private void Update() {
-            if (islinechanged)
-            {
-                islinechanged = false;
-                m_TrackContainer.GetComponent<TrackContainer>().DrawPredictLine(pline);
-            }
-            if(isTargetLineChanged)
-            {
-                isTargetLineChanged = false;
-                m_TargetContainer.GetComponent<TrackContainer>().DrawPredictLine(targetLine);
-            }
-            if (_trans.Field == null) return;
-			var (a, b, c, d, e, f, det) = _trans.Field;
-			data.Set(a, b, c, d, e, f, det);
-            
+			if (_isLineChanged) {
+				_isLineChanged = false;
+				trackContainer.GetComponent<TrackContainer>().DrawPredictLine(pline);
+			}
+
+			if (!_isTargetLineChanged) return;
+			_isTargetLineChanged = false;
+			targetContainer.GetComponent<TrackContainer>().DrawPredictLine(targetLine);
 		}
 
 		private void FixedUpdate() {
