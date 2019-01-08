@@ -3337,11 +3337,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b97054621145d646ae373d0c4da3e6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ArrowPrefabs: {fileID: 156368, guid: eb0e956ac3a9f4a2196e51f4551828fa, type: 3}
-  m_Color: {r: 0.06608224, g: 0.4245283, b: 0.116933115, a: 0}
-  m_HeightSlider: {fileID: 2053020782}
-  m_SelectDropDown: {fileID: 378692708}
-  m_SelectName: RealtimePosture
+  arrowPrefabs: {fileID: 1242152336034055665, guid: e6853a99633c1324f8a231b3afe7b520,
+    type: 3}
+  color: {r: 0.09301448, g: 1, b: 0, a: 0}
+  heightSlider: {fileID: 2053020782}
+  selectDropDown: {fileID: 378692708}
+  selectName: RealtimePosture
 --- !u!4 &1804103433
 Transform:
   m_ObjectHideFlags: 0
