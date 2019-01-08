@@ -3341,7 +3341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arrowPrefabs: {fileID: 156368, guid: eb0e956ac3a9f4a2196e51f4551828fa, type: 3}
-  color: {r: 0, g: 0, b: 0, a: 0}
+  color: {r: 0.094516255, g: 0.4811321, b: 0.07489321, a: 0}
   heightSlider: {fileID: 2053020782}
   selectDropDown: {fileID: 378692708}
   selectName: RealtimePosture
@@ -3994,7 +3994,7 @@ MonoBehaviour:
     type: 3}
   m_Car: {fileID: 871389904}
   m_HeightSlider: {fileID: 2053020782}
-  m_LineColor: {r: 0.9056604, g: 0.90405476, b: 0.18369527, a: 0}
+  m_LineColor: {r: 0.18062477, g: 0.37755707, b: 0.9339623, a: 0}
   m_SelectDropDown: {fileID: 378692708}
   m_GolbalBased: 0
 --- !u!4 &2081621775
