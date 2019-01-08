@@ -119,7 +119,7 @@ namespace Chassis {
 			                .DrawPredictLine(it));
 			_line.Field = null;
 			_targetLine.Field
-			          ?.Also(it => trackContainer
+			          ?.Also(it => targetContainer
 			                      .GetComponent<TrackContainer>()
 			                      .DrawPredictLine(it));
 			_targetLine.Field = null;

@@ -59,14 +59,10 @@ public static class Functions {
 	/// 	删除所有子节点
 	/// </summary>
 	/// <param name="root"></param>
-	/// <param name="includeSelf"></param>
-	public static void KillChildren(
-		this Transform root,
-		bool           includeSelf = false
-	) {
-		foreach (var obj in root.GetComponentsInChildren<Transform>()
-		                        .Where(it => it != root))
-			KillChildren(obj, true);
-		if (includeSelf) Object.Destroy(root.gameObject);
+	public static void KillChildren(this Transform root) {
+		foreach (var obj in from it in root.GetComponentsInChildren<Transform>()
+		                    where it != root
+		                    select it.gameObject)
+			Object.Destroy(obj.gameObject);
 	}
 }
