@@ -50,15 +50,12 @@ namespace Camera {
 			} else {
 				var focus = Focus;
 
-				if (!Input.GetMouseButton(0)) {
-					_mouse = null;
-				} else if (_mouse == null) {
-					_mouse = Input.mousePosition.Let(it => new Vector2(it.x, it.y));
-				} else {
-					var last = _mouse.Value;
-					_mouse =  Input.mousePosition.Let(it => new Vector2(it.x, it.y));
-					focus  -= 0.01f * (_mouse.Value - last);
-				}
+				_mouse =
+					!Input.GetMouseButton(0)
+						? (Vector2?) null
+						: Input.mousePosition
+						       .Let(it => new Vector2(it.x, it.y))
+						       .Also(it => focus -= 0.01f * (it - _mouse ?? Vector2.zero));
 
 				height += Input.mouseScrollDelta.y;
 				Focus  =  focus;

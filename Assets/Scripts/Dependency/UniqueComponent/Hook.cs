@@ -25,9 +25,7 @@ namespace MechDancer.Framework.Dependency.UniqueComponent {
 			set => _lock.Write(() => _field = value);
 		}
 
-		public bool TrySet(TS obj) {
-			return (obj as T)?.Also(it => Field = it) != null;
-		}
+		public bool TrySet(TS obj) => (obj as T)?.Also(it => Field = it) != null;
 	}
 
 	/// <inheritdoc />

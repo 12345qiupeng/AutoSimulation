@@ -37,10 +37,8 @@ namespace Node {
 		}
 
 		private void ClearPredictLine() {
-			var count = transform.childCount;
-			for (var i = count - 1; i >= 0; i--) {
+			for (var i = transform.childCount - 1; i >= 0; --i)
 				Destroy(transform.GetChild(i).gameObject);
-			}
 		}
 
 		private Vector3 TransCarCordToWorldCord(Vector2 vec, float height) {

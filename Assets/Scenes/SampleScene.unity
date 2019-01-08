@@ -3337,11 +3337,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b97054621145d646ae373d0c4da3e6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_SelectName: RealtimePosture
-  m_SelectDropDown: {fileID: 378692708}
   m_ArrowPrefabs: {fileID: 156368, guid: eb0e956ac3a9f4a2196e51f4551828fa, type: 3}
   m_Color: {r: 0.06608224, g: 0.4245283, b: 0.116933115, a: 0}
   m_HeightSlider: {fileID: 2053020782}
+  m_SelectDropDown: {fileID: 378692708}
+  m_SelectName: RealtimePosture
 --- !u!4 &1804103433
 Transform:
   m_ObjectHideFlags: 0
@@ -3684,7 +3684,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2053020781}
   - component: {fileID: 2053020782}
-  - component: {fileID: 2053020783}
   m_Layer: 5
   m_Name: HeightSlider
   m_TagString: Untagged
@@ -3801,19 +3800,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Slider+SliderEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &2053020783
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2053020780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
-  m_Script: {fileID: 11500000, guid: f8a3acca6035b8143844b87fe88d703e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &2064812677
 GameObject:
   m_ObjectHideFlags: 0

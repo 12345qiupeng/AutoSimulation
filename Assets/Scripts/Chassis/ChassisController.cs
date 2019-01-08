@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using MechDancer.Common;
 using MechDancer.Framework.Dependency.UniqueComponent;
 using Node;
 using UnityEngine;
@@ -38,12 +39,6 @@ namespace Chassis {
 		/// </summary>
 		private readonly ChassisRemoteHub _remoteHub;
 
-		private List<Vector2>
-			pline,
-			targetLine;
-
-		private bool _isLineChanged,
-		             _isTargetLineChanged;
 
 		/// <summary>
 		///     远程终端只能在解析器中构造
@@ -54,20 +49,9 @@ namespace Chassis {
 				    (v, w) => _velocity.Field = Tuple.Create(v, w),
 				    //  -
 				    (x, y, θ) => _pose.Field = Tuple.Create(x, y, θ),
-				    //  -
-				    (a, b, c, d, e, f, det) => _trans.Field = Tuple.Create(a, b, c, d, e, f, det),
-				    //  -
 				    Console.WriteLine,
-				    //
-				    (list) => {
-					    pline          = list;
-					    _isLineChanged = true;
-				    },
-				    (list) => {
-					    targetLine           = list;
-					    _isTargetLineChanged = true;
-				    }
-				   );
+				    list => _line.Field = list,
+				    list => _targetLine.Field = list);
 
 		public void AddKeyPose() {
 			_remoteHub.Send($"save key pose {Guid.NewGuid().ToString()}");
@@ -96,7 +80,6 @@ namespace Chassis {
 
 		#endregion
 
-
 		#region Engine
 
 		private readonly Hook<Tuple<float, float>, object> _velocity
@@ -105,13 +88,16 @@ namespace Chassis {
 		private readonly Hook<Tuple<float, float, float>, object> _pose
 			= new Hook<Tuple<float, float, float>, object>();
 
-		private readonly Hook<Tuple<float, float, float, float, float, float, float>, object> _trans
-			= new Hook<Tuple<float, float, float, float, float, float, float>, object>();
+		public  float   nodeCreatePeriod = 1.0f;
+		private Vector3 _lastPosition    = Vector3.zero;
 
-		public  float      nodeCreatePeriod = 1.0f;
-		private Vector3    _lastPosition    = Vector3.zero;
-		public  GameObject postureContainer;
+		public GameObject postureContainer;
 
+		private readonly Hook<List<Vector2>, object> _line
+			= new Hook<List<Vector2>, object>();
+
+		private readonly Hook<List<Vector2>, object> _targetLine
+			= new Hook<List<Vector2>, object>();
 
 		private void CreateNode(float x, float y, float θ) {
 			var temp = transform;
@@ -127,14 +113,16 @@ namespace Chassis {
 		private void OnDestroy() => _remoteHub.Stop();
 
 		private void Update() {
-			if (_isLineChanged) {
-				_isLineChanged = false;
-				trackContainer.GetComponent<TrackContainer>().DrawPredictLine(pline);
-			}
-
-			if (!_isTargetLineChanged) return;
-			_isTargetLineChanged = false;
-			targetContainer.GetComponent<TrackContainer>().DrawPredictLine(targetLine);
+			_line.Field
+			    ?.Also(it => trackContainer
+			                .GetComponent<TrackContainer>()
+			                .DrawPredictLine(it));
+			_line.Field = null;
+			_targetLine.Field
+			          ?.Also(it => trackContainer
+			                      .GetComponent<TrackContainer>()
+			                      .DrawPredictLine(it));
+			_targetLine.Field = null;
 		}
 
 		private void FixedUpdate() {

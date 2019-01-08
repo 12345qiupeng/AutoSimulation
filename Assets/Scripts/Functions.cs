@@ -1,9 +1,9 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MechDancer.Common;
-using MechDancer.Framework.Net.Protocol;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -54,4 +54,19 @@ public static class Functions {
 
 	public static GameObject LoadObject(string name) =>
 		(GameObject) Object.Instantiate(Resources.Load(name));
+
+	/// <summary>
+	/// 	删除所有子节点
+	/// </summary>
+	/// <param name="root"></param>
+	/// <param name="includeSelf"></param>
+	public static void KillChildren(
+		this Transform root,
+		bool           includeSelf = false
+	) {
+		foreach (var obj in root.GetComponentsInChildren<Transform>()
+		                        .Where(it => it != root))
+			KillChildren(obj, true);
+		if (includeSelf) Object.Destroy(root.gameObject);
+	}
 }
