@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.4366757, g: 0.48427194, b: 0.5645252, a: 1}
+  m_IndirectSpecularColor: {r: 0.43667546, g: 0.48427135, b: 0.5645225, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -54,7 +54,7 @@ LightmapSettings:
     m_EnableBakedLightmaps: 1
     m_EnableRealtimeLightmaps: 1
   m_LightmapEditorSettings:
-    serializedVersion: 11
+    serializedVersion: 12
     m_Resolution: 2
     m_BakeResolution: 40
     m_AtlasSize: 1024
@@ -77,6 +77,8 @@ LightmapSettings:
     m_PVRDirectSampleCount: 32
     m_PVRSampleCount: 500
     m_PVRBounces: 2
+    m_PVREnvironmentSampleCount: 500
+    m_PVREnvironmentReferencePointCount: 2048
     m_PVRFilteringMode: 2
     m_PVRDenoiserTypeDirect: 0
     m_PVRDenoiserTypeIndirect: 0
@@ -84,6 +86,7 @@ LightmapSettings:
     m_PVRFilterTypeDirect: 0
     m_PVRFilterTypeIndirect: 0
     m_PVRFilterTypeAO: 0
+    m_PVREnvironmentMIS: 0
     m_PVRCulling: 1
     m_PVRFilteringGaussRadiusDirect: 1
     m_PVRFilteringGaussRadiusIndirect: 5
@@ -3338,7 +3341,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   arrowPrefabs: {fileID: 156368, guid: eb0e956ac3a9f4a2196e51f4551828fa, type: 3}
-  color: {r: 0, g: 1, b: 0.043819427, a: 0}
+  color: {r: 0.094516255, g: 0.4811321, b: 0.07489321, a: 0}
   heightSlider: {fileID: 2053020782}
   selectDropDown: {fileID: 378692708}
   selectName: RealtimePosture
@@ -3991,7 +3994,7 @@ MonoBehaviour:
     type: 3}
   m_Car: {fileID: 871389904}
   m_HeightSlider: {fileID: 2053020782}
-  m_LineColor: {r: 0.9056604, g: 0.90405476, b: 0.18369527, a: 0}
+  m_LineColor: {r: 0.18062477, g: 0.37755707, b: 0.9339623, a: 0}
   m_SelectDropDown: {fileID: 378692708}
   m_GolbalBased: 0
 --- !u!4 &2081621775
