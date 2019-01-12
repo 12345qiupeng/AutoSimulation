@@ -68,16 +68,6 @@ namespace Chassis {
 		public GameObject trackContainer;
 		public GameObject targetContainer;
 
-		public void OnPredictLineBtnClicked() =>
-			trackContainer
-			   .GetComponent<TrackContainer>()
-			   .DrawPredictLine
-					(new List<Vector2> {
-						                   new Vector2(0, 1),
-						                   new Vector2(0, 2),
-						                   new Vector2(0, 3)
-					                   });
-
 		#endregion
 
 		#region Engine

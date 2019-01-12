@@ -48,10 +48,11 @@ namespace Chassis {
 		/// </summary>
 		public void PublishPose(float x, float y, float θ)
 			=> Broadcast((byte) Command.SPose,
-			             new MemoryStream(12).Write(x)
-			                                 .Write(y)
-			                                 .Write(θ)
-			                                 .GetBuffer());
+			             new MemoryStream(12)
+				             .Write(x)
+			                 .Write(y)
+			                 .Write(θ)
+			                 .GetBuffer());
 
 
 		public void Start() {
