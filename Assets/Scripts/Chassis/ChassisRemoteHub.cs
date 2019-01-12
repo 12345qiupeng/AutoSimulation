@@ -31,7 +31,8 @@ namespace Chassis {
 			Action<float, float, float> externalPoseReceived,
 			Action<string>              commandReceived,
 			Action<List<Vector2>>       externalListReceived,
-			Action<List<Vector2>>       externalTargetReceived
+			Action<List<Vector2>>       externalTargetReceived,
+			Action<float,float,float>   externalChassisCtrlReceived
 		) : base("Unity Chassis",
 		         newMemberDetected: it => Debug.Log($"{Chassis} detected {it}"),
 		         additions: new IComponent[] {
@@ -39,10 +40,33 @@ namespace Chassis {
 			                                     new CorePoseProcessor(externalPoseReceived),
 			                                     new CoreCmdProcessor(commandReceived),
 			                                     new CoreListProcessor(externalListReceived),
-			                                     new CoreTargetListProcessor(externalTargetReceived)
+			                                     new CoreTargetListProcessor(externalTargetReceived),
+			                                     new CoreChassisController(externalChassisCtrlReceived)
 		                                     }
 		        ) => _token = _cancellation.Token;
 
+		
+		/// <summary>
+		///    响应控制量
+		/// </summary>
+		private class CoreChassisController : IMulticastListener {
+			private static readonly byte[] InterestList = {(byte) Command.SControl};
+
+			private readonly Action<float, float, float> _drive;
+
+			public CoreChassisController(Action<float, float, float> drive) => _drive = drive;
+
+			public void Process(RemotePacket remotePacket) {
+				var (sender, _, payload) = remotePacket;
+				if (sender != algorithm) return;
+				var stream = new MemoryStream(payload);
+				_drive(stream.ReadFloat(),  // rho
+					stream.ReadFloat(),  // theta
+					stream.ReadFloat()); // omega
+			}
+
+			public IReadOnlyCollection<byte> Interest => InterestList;
+		}
 		/// <summary>
 		///     广播位姿
 		/// </summary>
@@ -177,7 +201,9 @@ namespace Chassis {
 
 		private enum Command : byte {
 			// Simulation
+			SControl = 63,	//响应算法控制
 			SPose = 64, // 模拟位姿
+			
 
 			// Algorithm
 			AVelocity   = 65, // 算法目标速度
