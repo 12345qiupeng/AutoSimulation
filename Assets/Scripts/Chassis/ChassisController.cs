@@ -35,6 +35,12 @@ namespace Chassis
 			transform.Rotate(-new Vector3(0, w / Mathf.PI * 180, 0) * Time.deltaTime);
 		}
 
+		/// <summary>
+		///     用Rho，Theta，Omega控制车辆运动
+		/// </summary>
+		/// <param name="rho">  长度    		 </param>
+		/// <param name="theta">后轮角度 rad </param>
+		/// <param name="omega">后轮角速度 rad/s </param>
 		private void DriveByRTO(float rho, float theta, float omega)
 		{
 			var tWVModle = new ThreeWheelVehicle(rho, theta, omega);

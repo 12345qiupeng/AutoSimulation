@@ -60,6 +60,9 @@ namespace Chassis
 
         public double Omega { get; private set; }
 
+        /// <summary>
+        ///     将Rho，Theta，Omega转换到车辆线速度以及角速度
+        /// </summary>
         private void ChangeRTOToVW()
         {
             Theta +=  InternalPeriod * BackOmega;
@@ -71,7 +74,9 @@ namespace Chassis
             Omega = MaxW * sign * Rho * Math.Cos(thetaRho);
 
         }
-
+        /// <summary>
+        ///     将车辆线速度以及角速度转换到Rho，Theta，Omega
+        /// </summary>
         private void ChangeVWToRT()
         {
             var theta = Math.Atan(-WheelBase / (Velocity / Omega));
@@ -83,7 +88,10 @@ namespace Chassis
             Theta = theta;
             Rho = rho;
         }
-
+        
+        /// </summary>
+        ///     按照给定周期输出以当前位置为原点的运动
+        /// </summary>
         public IEnumerable<Vector3> Trajectory(double period)
         {
             var carCoordinates = Vector3.zero;
