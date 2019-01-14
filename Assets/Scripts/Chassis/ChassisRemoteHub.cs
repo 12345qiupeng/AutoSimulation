@@ -50,7 +50,7 @@ namespace Chassis {
 		///    响应控制量
 		/// </summary>
 		private class CoreChassisController : IMulticastListener {
-			private static readonly byte[] InterestList = {(byte) Command.SControl};
+			private static readonly byte[] InterestList = {(byte) Command.AControl};
 
 			private readonly Action<float, float, float> _drive;
 
@@ -70,12 +70,15 @@ namespace Chassis {
 		/// <summary>
 		///     广播位姿
 		/// </summary>
-		public void PublishPose(float x, float y, float θ)
+		public void PublishPose(float x, float y, float θ,float v,float w,float bθ)
 			=> Broadcast((byte) Command.SPose,
 			             new MemoryStream(12)
 				             .Write(x)
 			                 .Write(y)
 			                 .Write(θ)
+				             .Write(v)
+				             .Write(w)
+				             .Write(bθ)
 			                 .GetBuffer());
 
 
@@ -201,7 +204,6 @@ namespace Chassis {
 
 		private enum Command : byte {
 			// Simulation
-			SControl = 63,	//响应算法控制
 			SPose = 64, // 模拟位姿
 			
 
@@ -210,7 +212,8 @@ namespace Chassis {
 			APose       = 66, // 算法位姿
 			ATrans      = 67, // 算法变换矩阵
 			AList       = 68, // 算法变换矩阵
-			ATargetList = 69
+			ATargetList = 69,
+			AControl = 63,	//响应算法控制
 		}
 	}
 }
