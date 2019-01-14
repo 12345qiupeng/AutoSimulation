@@ -89,6 +89,8 @@ namespace Chassis {
 			var pacemaker = new Pacemaker();
 			Launch(TimeSpan.FromSeconds(2),
 			       () => _token.IsCancellationRequested, pacemaker.Activate);
+			Launch(TimeSpan.FromSeconds(2),
+				() => _token.IsCancellationRequested, AskEveryone);
 		}
 
 		public void Stop() => _cancellation.Cancel();

@@ -11,17 +11,17 @@ namespace Chassis
     public class ThreeWheelVehicle : IChassisModel
     {
 
-        private const double MaxWheelSpeed = 2.0;
+        private const double MaxWheelSpeed = .3;
 
         private const double MaxV = MaxWheelSpeed;
 
         private const double MaxW = 2 * MaxWheelSpeed / Track;
 
-        private const double WheelBase = 0.280;
+        private const double WheelBase = 0.285;
 
-        private const double Track = 0.543;
+        private const double Track = 0.497;
 
-        private const double InternalPeriod = 0.01;    //s
+        private const double InternalPeriod = 0.001;    //s
 
         private readonly bool _isVw=true;
 
@@ -52,7 +52,7 @@ namespace Chassis
         }
 
         
-        private double BackOmega { get; }
+        public double BackOmega { get; }
         public double Rho { get; private set; }
         public double Theta { get; private set; }
 
@@ -66,6 +66,7 @@ namespace Chassis
         private void ChangeRTOToVW()
         {
             Theta +=  InternalPeriod * BackOmega;
+            Theta = Math.Max(Math.Min(Theta, Math.PI / 2), -Math.PI / 2);
             var rTheta = -WheelBase / Math.Tan(Theta);
             var sign = rTheta >= 0 ? 1 : -1;
             var thetaRho = Math.Atan(MaxW / MaxV * rTheta);

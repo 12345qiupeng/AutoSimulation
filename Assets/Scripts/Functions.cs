@@ -68,6 +68,14 @@ public static class Functions {
 		                    select it.gameObject)
 			Object.Destroy(obj.gameObject);
 	}
-	
-	
+
+    public static float AdjustToNormalize(this float value)
+    {
+        // float result=0;
+        //  while (value > Mathf.PI) value -= Mathf.PI * 2;
+        //  while (value < Mathf.PI) value -= Mathf.PI * 2;
+        return 0f;
+    }
+
+
 }

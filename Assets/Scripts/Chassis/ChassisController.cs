@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using MechDancer.Common;
 using MechDancer.Framework.Dependency.UniqueComponent;
 using MechDancer.Framework.Net.Modules.TcpConnection;
@@ -37,23 +38,25 @@ namespace Chassis
 			transform.Rotate(-new Vector3(0, w / Mathf.PI * 180, 0) * Time.deltaTime);
 		}
 
+        private float chassisTheta = 0;
+
 		/// <summary>
 		///     用Rho，Theta，Omega控制车辆运动
 		/// </summary>
 		/// <param name="rho">  长度    		 </param>
-		/// <param name="theta">后轮角度 rad </param>
+		/// <param name="theta">后轮当前角度 rad </param>
 		/// <param name="omega">后轮角速度 rad/s </param>
 		private void DriveByRTO(float rho, float theta, float omega,out float carV,out float carW)
 		{
-			var tWVModle = new ThreeWheelVehicle(rho, theta, omega);
-			var pose = tWVModle.Trajectory(0.1).Take(1);
+			var tWVModle = new ThreeWheelVehicle(rho, chassisTheta, omega);
+			var pose = tWVModle.Trajectory(Time.deltaTime).Take(1);
 			foreach (var p in pose)
 			{
 				transform.Translate(new Vector3(p.x, 0, p.y));
-				transform.Rotate(new Vector3(0, (float) (p.z / Math.PI) * 180, 0));
+				transform.Rotate(new Vector3(0, -(float) (p.z / Math.PI) * 180, 0));
 			}
-
-			carV = (float) tWVModle.Velocity;
+            chassisTheta = (float) tWVModle.Theta;
+            carV = (float) tWVModle.Velocity;
 			carW = (float) tWVModle.Omega;
 			//		_remoteHub.Connect("algorism", (byte) TcpCmd.Mail, stream => stream.Say("123"));
 
@@ -81,7 +84,8 @@ namespace Chassis
 				Console.WriteLine,
 				list => _line.Field = list,
 				list => _targetLine.Field = list,
-				(rho, theta, omega) => _carCtrlCmd.Field = Tuple.Create(rho, theta, omega)
+				(rho, theta, omega) =>
+                _carCtrlCmd.Field = Tuple.Create(rho, theta, omega)
 			);
 
 		public void AddKeyPose()
@@ -158,25 +162,32 @@ namespace Chassis
 			_targetLine.Field = null;
 		}
 
+
+        public void OnSendSuspendButtonClicked()
+        {
+            isSendStop = !isSendStop;
+        }
+
+        private bool isSendStop = false;
+        private DateTime _last = DateTime.Now;
 		private void FixedUpdate()
 		{
 			switch (ctrlMode.captionText.text)
 			{
 				case "模拟控制":
-					if (_carCtrlCmd.Field == null) return;
-					var (sr, sθ, so) = _carCtrlCmd.Field;
+					var (sr, sθ, so) = _carCtrlCmd.Field??Tuple.Create(0f,0f,0f);
 					DriveByRTO(sr,sθ,so, out var carv,out var carw);
 					var (sx, sy, scθ) = CurrentPose;
-					_remoteHub.PublishPose(sx, sy, scθ,carv,carw,carv/carw);
-					CreateNode(sx, sy, scθ);
-					break;
-				case "键盘控制":
-					var kv = Input.GetAxis("Vertical") * 0.5f;
-					var kw = Input.GetAxis("Horizontal") * (-Mathf.PI / 4);
-					Drive(kv,kw);
-					var (kx, ky, kθ) = CurrentPose;
-					_remoteHub.PublishPose(kx, ky, kθ, kv, kw,kv/kw);
-					CreateNode(kx, ky, kθ);
+                    var now = DateTime.Now;
+                    if (now - _last > TimeSpan.FromSeconds(.1))
+                    {
+                        _last = now;
+                        CreateNode(sx, sy, scθ);
+                        if(!isSendStop)
+                        {
+                            Task.Run(() => _remoteHub.PublishPose(sx, sy, scθ, carv, carw, chassisTheta));
+                        }
+                    }
 					break;
 				case "实时控制":
 					if (_pose.Field == null) return;
@@ -184,12 +195,14 @@ namespace Chassis
 					transform.SetPose(rx, ry, null, rθ);
 					CreateNode(rx, ry, rθ);
 					break;
-				default:
+				case "键盘控制":
+                default:
 					var v = Input.GetAxis("Vertical") * 0.5f;
 					var w = Input.GetAxis("Horizontal") * (-Mathf.PI / 4);
 					Drive(v,w);
 					var (x, y, θ) = CurrentPose;
-					_remoteHub.PublishPose(x, y, θ, v, w, v / w);
+                    if (w == 0) w += 0.01f;
+                    if(!isSendStop) _remoteHub.PublishPose(x, y, θ, v, w, v / w);
 					CreateNode(x, y, θ);
 					break;
 			}

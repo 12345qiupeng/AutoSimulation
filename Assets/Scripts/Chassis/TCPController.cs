@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using Chassis;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +20,7 @@ public class TCPController : MonoBehaviour
 	public GameObject _redSwitch;
 
     private bool isRecording = false;
+    private bool isNavigation = false;
 
 	
 	private void Start()
@@ -35,22 +37,26 @@ public class TCPController : MonoBehaviour
         isRecording = !isRecording;
         if (isRecording)
 	    {
-		    _cCtrl._remoteHub.Send($"start record");
+            Task.Run(()=>_cCtrl._remoteHub.Send("start record"));
 	    }
 	    else
 	    {
-		    _cCtrl._remoteHub.Send($"stop record");
+            Task.Run(() => _cCtrl._remoteHub.Send("stop record"));
 	    }
     }
 
     public void OnNavigationButtonClicked()
     {
-	    _cCtrl._remoteHub.Send($"load path {_startPointName.text.ToString()} -> {_endPointName.text.ToString()}");
+        isNavigation = !isNavigation;
+        if(isNavigation)
+            Task.Run(() => _cCtrl._remoteHub.Send($"load path {_startPointName.text.ToString()} -> {_endPointName.text.ToString()}\n start navigation"));
+        else
+            Task.Run(() => _cCtrl._remoteHub.Send("stop navigation"));
     }
 
     public void OnSaveKeyButtonClicked()
     {
-	    _cCtrl._remoteHub.Send($"save key pose {_keyName.text.ToString()}");
+        Task.Run(() => _cCtrl._remoteHub.Send($"save key pose {_keyName.text.ToString()}"));
         var (x, y, θ) = _cCtrl.CurrentPose;
         Functions.LoadObject("KeyPose")
         	.transform
