@@ -21,7 +21,7 @@ namespace Chassis
 		/// <summary>
 		///     获取自身二维位姿
 		/// </summary>
-		private (float x, float y, float theta) CurrentPose =>
+		public (float x, float y, float theta) CurrentPose =>
 			(transform.position.x,
 				transform.position.z,
 				Mathf.Atan2(transform.right.z, transform.right.x));
@@ -66,7 +66,7 @@ namespace Chassis
 		/// <summary>
 		///     远程终端
 		/// </summary>
-		private readonly ChassisRemoteHub _remoteHub;
+		[HideInInspector] public readonly ChassisRemoteHub _remoteHub;
 
 
 		/// <summary>
