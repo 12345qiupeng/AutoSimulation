@@ -132,34 +132,57 @@ namespace MechDancer.Common {
 		/// <typeparam name="TI">输入类型</typeparam>
 		/// <typeparam name="TO">输出类型</typeparam>
 		/// <returns>结果列表</returns>
-		public static IEnumerable<TO> SelectNotNull<TI, TO>(
-			this IEnumerable<TI> receiver,
-			Func<TI, TO>         func
-		) where TO : class => receiver.Select(func).WhereNotNull();
+		public static IEnumerable<TO> SelectNotNull<TI, TO>(this IEnumerable<TI> receiver, Func<TI, TO> func)
+			where TO : class => receiver.Select(func).WhereNotNull();
 
 		/// <summary>
-		/// 	判定列表中不包含特定元素
+		///     判定列表中不包含特定元素
 		/// </summary>
 		/// <param name="receiver">目标列表</param>
 		/// <param name="item">特定元素</param>
 		/// <typeparam name="T">元素类型</typeparam>
 		/// <returns>是否</returns>
-		public static bool NotContains<T>(
-			this IEnumerable<T> receiver,
-			T                   item
-		) => !receiver.Contains(item);
+		public static bool NotContains<T>(this IEnumerable<T> receiver, T item)
+			=> !receiver.Contains(item);
 
 		/// <summary>
-		/// 	取两集合的交集
+		///     取两集合的交集
 		/// </summary>
 		/// <param name="receiver">集合1</param>
 		/// <param name="others">集合2</param>
 		/// <typeparam name="T">元素类型</typeparam>
 		/// <returns>交集</returns>
-		public static IEnumerable<T> Retain<T>(
+		public static IEnumerable<T> Retain<T>(this IEnumerable<T> receiver, IEnumerable<T> others)
+			=> receiver.Where(others.Contains);
+
+		/// <summary>
+		/// 	求差集
+		/// </summary>
+		/// <param name="receiver">集合1</param>
+		/// <param name="others">集合2</param>
+		/// <param name="difference0"> {1} - {2} </param>
+		/// <param name="difference1"> {2} - {1} </param>
+		/// <typeparam name="T">元素类型</typeparam>
+		public static void Difference<T>(
 			this IEnumerable<T> receiver,
-			IEnumerable<T>      others
-		) => receiver.Where(others.Contains);
+			IEnumerable<T>      others,
+			out List<T>         difference0,
+			out List<T>         difference1) {
+			difference0 = receiver.Where(others.NotContains).ToList();
+			difference1 = others.Where(receiver.NotContains).ToList();
+		}
+
+		/// <summary>
+		/// 	令一个可变列表与另一个保持一致
+		/// </summary>
+		/// <param name="receiver">列表</param>
+		/// <param name="others">参考</param>
+		/// <typeparam name="T">元素类型</typeparam>
+		public static void Sync<T>(this ICollection<T> receiver, IEnumerable<T> others) {
+			receiver.Difference(others, out var difference0, out var difference1);
+			foreach (var it in difference0) receiver.Remove(it);
+			foreach (var it in difference1) receiver.Add(it);
+		}
 
 		#endregion
 

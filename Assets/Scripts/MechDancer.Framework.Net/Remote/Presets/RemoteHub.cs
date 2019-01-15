@@ -30,11 +30,12 @@ namespace MechDancer.Framework.Net.Presets {
 		private readonly MulticastReceiver _receiver = new MulticastReceiver();
 
 		private readonly DynamicScope     _scope;
-		private readonly ConnectionServer _server        = new ConnectionServer();
-		private readonly ServerSockets    _servers       = new ServerSockets();
-		private readonly PacketSlicer     _slicer        = new PacketSlicer();
-		private readonly PortBroadcaster  _synchronizer1 = new PortBroadcaster();
-		private readonly PortMonitor      _synchronizer2 = new PortMonitor();
+		private readonly ConnectionServer _server  = new ConnectionServer();
+		private readonly ServerSockets    _servers = new ServerSockets();
+
+		private readonly PacketSlicer    _slicer        = new PacketSlicer();
+		private readonly PortBroadcaster _synchronizer1 = new PortBroadcaster();
+		private readonly PortMonitor     _synchronizer2 = new PortMonitor();
 
 		/// <summary>
 		///     构造器
@@ -161,8 +162,9 @@ namespace MechDancer.Framework.Net.Presets {
 		///     尚未得知对方地址或连接失败将返回 false
 		/// </returns>
 		public bool Connect(string name, byte cmd, Action<NetworkStream> block) {
-			using (var client = _client.Connect(name, cmd))
+			using (var client = _client.Connect(name, cmd)) {
 				return client?.Also(block) != null;
+			}
 		}
 
 		/// <summary>

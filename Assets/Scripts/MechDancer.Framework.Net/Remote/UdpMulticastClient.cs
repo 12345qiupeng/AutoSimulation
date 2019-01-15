@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Net;
 using System.Net.NetworkInformation;
@@ -11,12 +12,16 @@ namespace MechDancer.Framework.Net {
 	///     UDP 组播客户端
 	/// </summary>
 	public sealed class UdpMulticastClient : IDisposable {
+		private readonly ConcurrentDictionary<IPAddress, byte> _addresses
+			= new ConcurrentDictionary<IPAddress, byte>();
+
 		private readonly IPEndPoint _multicast;
 
 		/// <summary>
 		///     底层套接字
 		/// </summary>
-		public readonly Socket Socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+		public readonly Socket Socket
+			= new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
 		/// <summary>
 		///     构造 UDP 组播客户端
@@ -52,13 +57,12 @@ namespace MechDancer.Framework.Net {
 		/// </summary>
 		/// <param name="local">网络端口的单播地址</param>
 		public void Bind(IPAddress local) {
+			if (!_addresses.TryAdd(local, 0)) return;
 			try {
 				Socket.SetSocketOption
 					(SocketOptionLevel.IP,
 					 SocketOptionName.AddMembership,
-					 local == null
-						 ? new MulticastOption(_multicast.Address)
-						 : new MulticastOption(_multicast.Address, local));
+					 new MulticastOption(_multicast.Address, local));
 			} catch (SystemException) { }
 		}
 
@@ -67,7 +71,8 @@ namespace MechDancer.Framework.Net {
 		/// </summary>
 		/// <param name="payload">负载数据包</param>
 		/// <param name="size">数据包范围</param>
-		public void Broadcast(byte[] payload, int size) => Socket.SendTo(payload, size, SocketFlags.None, _multicast);
+		public void Broadcast(byte[] payload, int size)
+			=> Socket.SendTo(payload, size, SocketFlags.None, _multicast);
 
 		/// <summary>
 		///     从组播接收数据
